@@ -1,0 +1,29 @@
+name: Deploy control-plane
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply manifests
+        run: kubectl apply -f .
+
+      - name: Notify Slack on success
+        if: success()
+        run: |
+          curl -s -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+            -H 'Content-Type: application/json' \
+            -d '{"text":"✅ Deploy succeeded: `${{ github.ref_name }}` @ `${{ github.sha }}`"}'
+
+      - name: Notify Slack on failure
+        if: failure()
+        run: |
+          curl -s -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+            -H 'Content-Type: application/json' \
+            -d '{"text":"❌ Deploy failed: `${{ github.ref_name }}` @ `${{ github.sha }}`"}'
