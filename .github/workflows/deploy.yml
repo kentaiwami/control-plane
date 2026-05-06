@@ -12,7 +12,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Apply manifests
-        run: sudo kubectl apply -f .
+        run: |
+          sed "s|\${ALLOWED_IP}|${{ secrets.ALLOWED_IP }}|g" ingress.yaml | sudo kubectl apply -f -
+          sudo kubectl apply -f $(ls *.yaml | grep -v ingress.yaml | tr '\n' ' ')
 
       - name: Rollout restart
         run: |
