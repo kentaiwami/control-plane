@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Apply manifests
-        run: kubectl apply -f .
+        run: sudo kubectl apply -f .
 
       - name: Notify Slack on success
         if: success()
