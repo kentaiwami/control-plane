@@ -14,6 +14,10 @@ jobs:
       - name: Apply manifests
         run: sudo kubectl apply -f .
 
+      - name: Rollout restart
+        run: |
+          sudo kubectl rollout restart daemonset/promtail -n monitoring
+
       - name: Notify Slack on success
         if: success()
         run: |
